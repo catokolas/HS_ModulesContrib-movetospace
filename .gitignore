@@ -1,0 +1,6 @@
+# Compiled native modules
+*.so
+*.dSYM/
+
+# macOS
+.DS_Store

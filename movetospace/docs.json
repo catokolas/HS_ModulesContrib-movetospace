@@ -1,0 +1,60 @@
+[
+  {
+    "Command": [],
+    "Constant": [],
+    "Constructor": [],
+    "Deprecated": [],
+    "Field": [],
+    "Function": [
+      {
+        "def": "hs._ckol.movetospace.move(win, spaceID) -> boolean",
+        "desc": "Moves a window to a specific macOS Space, verifying the move actually happened.",
+        "doc": "Moves `win` to the macOS Space identified by `spaceID`. Tries SLSMoveWindowsToManagedSpace first; if verification via hs.spaces.windowSpaces shows the window didn't move, falls back to CGSAddWindowsToSpaces + CGSRemoveWindowsFromSpaces. Only returns true once verification confirms.\n\nNote: on macOS 26+ both SkyLight paths are gated for cross-process windows; this call typically succeeds only for windows owned by Hammerspoon itself.\n\nParameters:\n * win - an hs.window object, or a CGWindowID integer\n * spaceID - destination Space ID (from hs.spaces.spacesForScreen)\n\nReturns:\n * true on verified success, false if neither code path actually moved the window",
+        "examples": [],
+        "file": "init.lua",
+        "lineno": "20",
+        "name": "move",
+        "notes": [],
+        "parameters": [
+          " * win - an hs.window object, or a CGWindowID integer",
+          " * spaceID - destination Space ID (from hs.spaces.spacesForScreen)"
+        ],
+        "returns": [
+          " * true on verified success, false if neither code path actually moved the window"
+        ],
+        "signature": "hs._ckol.movetospace.move(win, spaceID) -> boolean",
+        "stripped_doc": "",
+        "type": "Function"
+      },
+      {
+        "def": "hs._ckol.movetospace.dragMoveWindow(win, direction) -> boolean",
+        "desc": "Last-resort drag-simulation at kCGHIDEventTap for windows the API path can't move.",
+        "doc": "Posts mouseDown / mouseDragged / Ctrl-down / arrow-down / arrow-up / Ctrl-up / mouseUp events at kCGHIDEventTap with an HID-state event source. Bypasses the session-level filtering that drops hs.eventtap.keyStroke. Side effect: the view switches with the window.\n\nOn macOS 26+ this is also gated for cross-process Mission Control shortcuts; included for completeness.\n\nParameters:\n * win - an hs.window object\n * direction - \"left\" or \"right\"\n\nReturns:\n * true if the native call ran (does NOT verify the window moved; caller should verify with hs.spaces.windowSpaces)",
+        "examples": [],
+        "file": "init.lua",
+        "lineno": "68",
+        "name": "dragMoveWindow",
+        "notes": [],
+        "parameters": [
+          " * win - an hs.window object",
+          " * direction - \"left\" or \"right\""
+        ],
+        "returns": [
+          " * true if the native call ran"
+        ],
+        "signature": "hs._ckol.movetospace.dragMoveWindow(win, direction) -> boolean",
+        "stripped_doc": "",
+        "type": "Function"
+      }
+    ],
+    "Method": [],
+    "Variable": [],
+    "desc": "Move a window to a specific macOS Space via SkyLight private APIs.",
+    "doc": "A small Hammerspoon native module that moves a window to a specific macOS Space via SkyLight's private APIs — the path the public hs.spaces.moveWindowToSpace is supposed to use but which silently no-ops on macOS 26+ for most windows.\n\nOn macOS 26.5, all userspace paths are gated for cross-process windows: the call succeeds only for windows owned by the Hammerspoon process itself. See the bundled README for details and the practical workaround.",
+    "items": [],
+    "name": "hs._ckol.movetospace",
+    "stripped_doc": "",
+    "submodules": [],
+    "type": "Module"
+  }
+]
