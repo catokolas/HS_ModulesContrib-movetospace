@@ -95,4 +95,53 @@ uninstall:
 	(pushd $(PREFIX)/$(MODULE)/ ; rm -v -fr $(OBJCFILE:.m=.so.dSYM) ; popd)
 	rmdir -p $(PREFIX)/$(MODULE) ; exit 0
 
-.PHONY: all clean uninstall verify install install-objc install-lua link
+# Release-bundle target. Rebuilds internal.so as a universal binary
+# (arm64 + x86_64) and packages the runtime files into a zip with the
+# layout the end user needs:
+#
+#   <MODULE>-<VERSION>-macos-universal.zip
+#     └── hs/_ckol/<MODULE>/
+#           ├── init.lua
+#           ├── internal.so
+#           ├── LICENSE     (if present in parent dir)
+#           └── README.md   (if present in parent dir)
+#
+# End-user install:
+#   unzip <zip> -d ~/.hammerspoon
+#   # (then quit & relaunch Hammerspoon to load internal.so)
+#
+# Override VERSION via the command line:  make dist VERSION=0.2
+VERSION    ?= 0.1
+DIST_NAME  := $(MODULE)-$(VERSION)-macos-universal
+DIST_DIR   := dist
+DIST_STAGE := $(DIST_DIR)/staging
+DIST_ZIP   := $(DIST_DIR)/$(DIST_NAME).zip
+
+# Force a universal-binary rebuild, then stage files and zip.
+dist: dist-clean
+	@echo "Building universal binary (arm64 + x86_64)..."
+	$(MAKE) -B $(SOFILE) DEBUG_CFLAGS= EXTRA_CFLAGS="-F$(HS_APPLICATION)/Hammerspoon.app/Contents/Frameworks -mmacosx-version-min=13.0 -arch arm64 -arch x86_64"
+	@echo
+	@echo "Staging release files..."
+	mkdir -p $(DIST_STAGE)/hs/_ckol/$(MODULE)
+	install -m 0644 $(SOFILE)  $(DIST_STAGE)/hs/_ckol/$(MODULE)/
+	install -m 0644 $(LUAFILE) $(DIST_STAGE)/hs/_ckol/$(MODULE)/
+	@if [ -f ../LICENSE   ]; then install -m 0644 ../LICENSE   $(DIST_STAGE)/hs/_ckol/$(MODULE)/; fi
+	@if [ -f ../README.md ]; then install -m 0644 ../README.md $(DIST_STAGE)/hs/_ckol/$(MODULE)/; fi
+	@echo
+	@echo "Packaging $(DIST_ZIP)..."
+	cd $(DIST_STAGE) && zip -r ../$(DIST_NAME).zip hs
+	@echo
+	@echo "=== Done ==="
+	@file $(SOFILE)
+	@echo
+	@unzip -l $(DIST_ZIP)
+	@echo
+	@echo "Artifact: $(DIST_DIR)/$(DIST_NAME).zip"
+	@echo "Note: $(SOFILE) is now a universal binary;"
+	@echo "      run 'make clean && make' to rebuild a native-only dev binary."
+
+dist-clean:
+	rm -rf $(DIST_DIR)
+
+.PHONY: all clean uninstall verify install install-objc install-lua link dist dist-clean

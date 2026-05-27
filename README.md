@@ -78,7 +78,35 @@ module degrades gracefully if Apple removes them):
 Inline comments in `movetospace/internal.m` document each call and the
 rationale for trying multiple paths.
 
-## Build & install
+## Install without compiling (pre-built universal binary)
+
+Each release ships a `movetospace-<version>-macos-universal.zip` containing
+a fat `internal.so` (arm64 + x86_64) plus `init.lua`, built against
+`-mmacosx-version-min=13.0`. Pull the latest release artifact and unzip
+straight into `~/.hammerspoon`:
+
+```bash
+# 1. Download (replace <version> with whatever's current on the Releases page).
+curl -L -o movetospace.zip \
+  https://github.com/catokolas/HS_ModulesContrib-movetospace/releases/latest/download/movetospace-<version>-macos-universal.zip
+
+# 2. macOS may quarantine a downloaded .so; clear the flag so dlopen accepts it.
+xattr -dr com.apple.quarantine movetospace.zip 2>/dev/null || true
+
+# 3. Unzip into ~/.hammerspoon. The archive's top-level is hs/, so this
+#    lands at ~/.hammerspoon/hs/_ckol/movetospace/.
+unzip -o movetospace.zip -d ~/.hammerspoon
+
+# 4. Quit and relaunch Hammerspoon (Reload Config will NOT pick up a fresh .so).
+#    Then verify in the Console:
+#      require("hs._ckol.movetospace")
+```
+
+If `dlopen` still complains about the quarantine after step 2, repeat the
+`xattr` after step 3 on the unpacked `.so`:
+`xattr -dr com.apple.quarantine ~/.hammerspoon/hs/_ckol/movetospace`.
+
+## Build & install from source
 
 ```bash
 cd movetospace
@@ -89,6 +117,13 @@ make link          # symlinks instead
 
 Then **fully quit and relaunch Hammerspoon** (Reload Config doesn't refresh
 native modules — already-loaded `.so` files stay pinned in `package.loaded`).
+
+To produce a release artifact (universal binary zip) yourself:
+
+```bash
+cd movetospace
+make dist VERSION=0.1     # → dist/movetospace-0.1-macos-universal.zip
+```
 
 ## API
 
