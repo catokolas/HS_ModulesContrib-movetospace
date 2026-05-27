@@ -36,7 +36,7 @@ most users.
 
 The module is published here because:
 - The native call paths are correct, well-documented, and ready the day
-  Apple loosens the restriction.
+  Apple loosens the restriction (?).
 - It demonstrates the limit clearly for anyone investigating the same
   problem.
 - It still works for the same-process case (Hammerspoon's own windows).
