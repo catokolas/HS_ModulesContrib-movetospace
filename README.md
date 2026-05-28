@@ -125,6 +125,25 @@ cd movetospace
 make dist VERSION=0.1     # → dist/movetospace-0.1-macos-universal.zip
 ```
 
+## Logging
+
+This module emits no log output of its own (no `hs.logger`, no
+`NSLog`). All diagnostic output comes from the calling Spoon. For the
+companion `MoveSpaces.spoon`, that means the full decision-trace —
+which API path was attempted, whether `hs.spaces.windowSpaces`
+verification confirmed the move, and whether the HID-level drag-sim
+fallback ran. See [`MoveSpaces.spoon/README.md`](https://github.com/catokolas/HS_SpoonsContrib/blob/main/MoveSpaces.spoon/README.md)
+for setting `spoon.MoveSpaces.logger.setLogLevel("info")` to see it.
+
+For native-side debugging, build a debug copy and add `NSLog` ad-hoc:
+
+```bash
+cd movetospace
+make clean && make DEBUG_CFLAGS="-g -O0"
+# add NSLog(@"...") calls in internal.m, rebuild, quit & relaunch HS.
+# Output lands in Console.app under the Hammerspoon process.
+```
+
 ## API
 
 ### `hs._ckol.movetospace.move(win, spaceID) -> boolean`
