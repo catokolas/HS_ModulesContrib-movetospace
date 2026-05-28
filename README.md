@@ -3,7 +3,7 @@
 A small Hammerspoon native module that moves a window to a specific macOS
 Space via SkyLight's private APIs — the path the public
 `hs.spaces.moveWindowToSpace` is supposed to use but which silently no-ops
-on macOS 26+ for most windows.
+on macOS 26+ for most windows. It is designed to be called from the [MoveSpaces.spoon](https://github.com/catokolas/HS_SpoonsContrib/blob/main/MoveSpaces.spoon).
 
 ## ⚠️ macOS 26.5 status: limited usefulness
 
