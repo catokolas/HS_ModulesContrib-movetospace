@@ -125,6 +125,23 @@ cd movetospace
 make dist VERSION=0.1     # → dist/movetospace-0.1-macos-universal.zip
 ```
 
+If you have access — publish the artifact as a GitHub Release with the
+[`gh`](https://cli.github.com) CLI:
+
+```bash
+# From the repo root (the parent of the `movetospace/` subdir):
+gh release create v0.1 \
+  movetospace/dist/movetospace-0.1-macos-universal.zip \
+  --title "v0.1" \
+  --notes "Initial release. Universal arm64 + x86_64 binary built against macOS 13.0+."
+```
+
+This creates the git tag `v0.1`, drafts a release named "v0.1" on
+GitHub, and attaches the zip as a downloadable asset. The
+`curl https://.../releases/latest/download/...` URL in the
+install-without-compiling section above resolves to whatever the most
+recent release uploads.
+
 ## Logging
 
 This module emits no log output of its own (no `hs.logger`, no
