@@ -122,7 +122,8 @@ To produce a release artifact (universal binary zip) yourself:
 
 ```bash
 cd movetospace
-make dist VERSION=0.1     # → dist/movetospace-0.1-macos-universal.zip
+VERSION=0.1
+make dist $VERSION     # → dist/movetospace-0.1-macos-universal.zip
 ```
 
 If you have access — publish the artifact as a GitHub Release with the
@@ -130,9 +131,9 @@ If you have access — publish the artifact as a GitHub Release with the
 
 ```bash
 # From the repo root (the parent of the `movetospace/` subdir):
-gh release create v0.1 \
-  movetospace/dist/movetospace-0.1-macos-universal.zip \
-  --title "v0.1" \
+gh release create v$VERSION \
+  dist/movetospace-$VERSION-macos-universal.zip \
+  --title "v$VERSION" \
   --notes "Initial release. Universal arm64 + x86_64 binary built against macOS 13.0+."
 ```
 
